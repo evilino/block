@@ -1,5 +1,5 @@
-#Block整理
->对象与对象之间的通信方式:
+# Block整理
+> 对象与对象之间的通信方式:
 - Protocol-delegate （一对一）
 - NSNotification （一对多）
 - Block （一对一）
@@ -9,7 +9,7 @@
 
 [TOC]
 
-##定义
+## 定义
 Block作为C语言的扩展，并不是高新技术，和其他语言的闭包或lambda表达式是一回事。iOS4.0系统已开始支持block，在编程过程中，blocks被Obj-C看成是对象，它封装了一段代码，这段代码可以在任何时候执行。Blocks可以作为函数参数或者函数的返回值，而其本身又可以带输入参数或返回值。
 Block的使用很像函数指针，不过与函数最大的不同是：**Block可以访问函数以外、词法作用域以内的外部变量的值。换句话说，Block不仅 实现函数的功能，还能携带函数的执行环境。**
 ```
@@ -42,8 +42,8 @@ void (^bBlock)() = ^(){
 	printf(num = %d,a);
 	};
 ```
-##类型
->一个由C/C++编译的程序占用的内存分为以下几个部分
+## 类型
+> 一个由C/C++编译的程序占用的内存分为以下几个部分
 * **栈**（stack）:由编译器自动分配释放 ，存放函数的参数值，局部变量的值等。其操作方式类似于数据结构中的栈。
 * **堆**（heap）: 一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收 。注意它与数据结构中的堆是两回事，分配方式类似于链表。
 * **全局区**（静态区static）:全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域， 未初始化的全局变量和未初始化的静态变量在相邻的另一块区域，程序结束后由系统释放。
@@ -60,8 +60,8 @@ void (^bBlock)() = ^(){
 2. 在MRC下，block内部如果访问外部变量，这个block是栈block__NSStackBlock__，存储在内存中的栈上。
 3. 在MRC下，block内部访问外部变量，同时对该block做一次copy操作，这个block是堆block__NSMallocBlock__，存储在内存中的堆上。
 4. 在ARC下，block内部如果访问外部变量，这个block是堆block__NSMallocBlock__，存储在内存中的堆上，因为在ARC下，默认对block做了一次copy操作。
-##用途
-###作为方法的参数
+## 用途
+### 作为方法的参数
 
     (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	    [self blockAsPara:^{
@@ -72,7 +72,7 @@ void (^bBlock)() = ^(){
 		block(); //执行block内部的代码
 	}
     
-###作为属性
+### 作为属性
 
     @property (nonatomic,copy) void (^myBlock)();//block作为属性
     -（void）viewDidLoad{
@@ -84,7 +84,7 @@ void (^bBlock)() = ^(){
 	   self.myBlock()；//myBlock作为属性时的调用
     }
 
-##本质
+## 本质
 Block 的本质是可以截取自动变量的匿名函数。
 __匿名函数__：顾名思义就是不带名字的函数，在C语言中不允许这样的方法存在，至少要知道函数的名字来对函数进行引用，而在OC中的Block则可以用指针来直接调用一个函数，但虽说如此我们还是需要知道指针的名称。
 __截取自动变量__：
@@ -98,20 +98,20 @@ __截取自动变量__：
 	/* Output:b=0 */
 虽然我们在调用blo之前改变了b的值，但是输出的还是Block编译时候b的值，所以截获瞬间自动变量就是：在Block中会保存变量的值，而不会随变量的值的改变而改变。
 
-##Block 为什么能实现神奇的回调?
+## Block 为什么能实现神奇的回调?
 为什么在 A 中的 block 块能调用到 B 中的数据？
 
 回顾一下我们在 B 中所实现的代码，不外乎定义了一个 Block 变量，并在适当的时候传入参数，那么为什么在调用了 self.callBackBlock(_textField.text) 之后，值就神奇传到了 A 中的 Block 块了呢？
 
 事实是，通过简单的整理我们可以发现完整的回调流程应该是这样的：
 
-![Alt text](./1240.jpg)
+
 回调流程
 1. block 代码块赋值给 bVC.callBackBlock，此时 callBackBlock 的指针就指向这个代码块。
 2. 调用 callBackBlock(NSString *text)
 3. 由于 callBackBlock 的指针是指向 A 中的 block 代码块，因此执行代码块的代码，实现回调。
 
-##Block的修饰
+## Block的修饰
 **ARC情况下**：
 
 - 如果用copy修饰Block，该Block就会存储在堆空间。则会对Block的内部对象进行强引用，导致循环引用。内存无法释放。
@@ -143,7 +143,7 @@ MRC小常识:
 
 3.MRC没有强指针,默认一个对象就是基本类型
 
-##Block的使用注意
+## Block的使用注意
 **block访问外部变量**
 1. block内部可以访问外部的变量，block默认是将其复制到其数据结构中来实现访问的。
 2. 默认情况下，block内部不能修改外面的局部变量，因为通过block进行闭包的变量是const的。
